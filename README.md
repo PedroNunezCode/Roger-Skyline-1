@@ -83,6 +83,11 @@ In my case my default gateway is 10.113.254.254 This will be vital to hours of d
 sudo vim /etc/network/interfaces.d/enp0s3
 ```
 
+The file should look similar to this depending on the gateway of your host machine:
+
+![UpdatedStaticNetworkInterface](images/NetworkInterfaceStatic.png)
+
+
 
 
 

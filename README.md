@@ -16,3 +16,22 @@ $ apt-get install sudo vim -y
 ```
 
 I prefer to use vim but you can use nano which is installed in the vm by default.
+
+Next the `/etc/sudoers` file needs to be updated. The username you created must be given sudo rights.
+In root user:
+```
+nano /etc/sudoers
+```
+Notice that I used nano. In this case nano will be the easiest because if I wanted to use vim I would have to change the read/write permissions of the file.
+
+By default, on line 20 You will see that the root user has access to all. You will want to add your user to this file.
+In my case:
+
+```
+# User privilege specification
+root  ALL=(ALL:ALL) ALL
+nunezcode ALL=(ALL:ALL) ALL
+```
+![sudoers](images/Sudoers.png)
+
+

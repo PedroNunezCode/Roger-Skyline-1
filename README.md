@@ -173,7 +173,62 @@ $ sudo ufw enable
 ```
 
 We will need to enable to following 3 services on our firewall:
-  - SSH : `sudo ufw allow 50550/tcp`
+  - SSH : `sudo ufw allow 50550/tcp` (Allow connection via ssh)
+  - HTTP : `sudo ufw allow 80/tcp` (Allow HTTP)
+  - HTTPS : `sudo ufw allow 443` (Allow HTTPS)
+  - STATUS : `sudo ufw status` (Check the status of our firewall)
+  
+![FirewallStatus](images/)
+
+### You have to set a DOS (Denial Of Service Attack) protection on your open ports of your VM.
+
+There is many ways to setup DOS Protection I used the article over at [Garron](https://www.garron.me/en/go2linux/fail2ban-protect-web-server-http-dos-attack.html). Here is a summary:
+
+***1.*** Install Apache2, Fail2Ban and IpTables
+```
+$ sudo apt-get install  apache2 fail2ban iptables
+```
+
+***2.*** Next, edit the Fail2Ban configuration file:
+
+```
+$ sudo vim /etc/fail2ban/jail.conf
+```
+
+- Protect our open ssh port (50550): Look for `[sshd]` and edit its value with the following :
+
+```
+[sshd]
+enable    = true
+port      = ssh
+logpath   = %(sshd_log)s
+backend   = %(sshd_backend)s
+maxentry  = 3
+bantime   = 1200
+```
+
+- Protect our port 80 (HTTP protocol security): Look for `[http-get-dos]` if it doesn't exist just add it. In my case, It didn't. Put the following for its value :
+
+```
+[http-get-dos]
+enabled   = true
+port      = http, https
+filter    = http-get-dos
+logpath   = /var/log/apache2/access.log
+maxretry  = 300
+findtime  = 300
+bantime   = 1200
+action    = iptables[name=HTTP, port=http, protocol=tcp]
+```
+
+The following steps should overall look like this:
+![ProtectedPorts](images/ProtectedPorts.png)
+
+
+
+
+
+  
 
 
 

@@ -248,6 +248,74 @@ $ sudo service fail2ban restart
 - Run `sudo fail2ban-client status` to see the status of fail2ban jails:
 ![Fail2BanStatus](images/Fail2BanStatus.png)
 
+### You have to set a protection against scans on your VM’s open ports.
+The way I setup protection agains open port scans can be found over at [this](https://en-wiki.ikoula.com/en/To_protect_against_the_scan_of_ports_with_portsentry) link.
+
+***1.*** Install Portsentry:
+
+```
+$ sudo apt-get install portsentry
+```
+
+***2.*** Configure Portsentry:
+
+- Stop the portsentry service:
+
+```
+$ sudo /etc/init.d/portsentry stop
+```
+
+![StopPortSentry](images/StopPortSentry.png)
+
+- "We will then implement the exceptions to not to block various IP addresses (at minimum your IP address)".
+
+Edit the file /etc/portsentry/portsentry.ignore.static and add your ip address.
+
+- We use portsentry in advanced mode for the TCP and UDP protocols. To do this, you must modify the file /etc/default/portsentry in order to have: 
+
+```
+$ sudo vim /etc/default/portsentry
+```
+
+Change to the following:
+
+```
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+- Portsentry needs to be a blockage. Activate it by changing BLOCK_UDP and BLOCK_TCP to 1:
+
+Edit the file `/etc/portsentry/portsentry.conf` to match the following: 
+
+```
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+
+- I want to block malicious attacks through iptables. Therefore comment on all lines of the configuration file that begin with KILL_ROUTE except the following: 
+
+```
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+
+You can verify if you uncommented the right one by running the following command from inside /etc/portsentry : 
+
+```
+$ sudo cat portsentry.conf | grep KILL_ROUTE | grep -v "#"
+```
+
+- Relaunch portsentry service and it will begin to block the port scans:
+
+```
+$ sudo /etc/init.d/portsentry start
+```
+
+![PortSentryStart](images/PortSentryStart.png)
+
+### Stop the services you don’t need for this project.
+
+I followed the tutorial over at [DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units) here is a brief summary:
 
 
 

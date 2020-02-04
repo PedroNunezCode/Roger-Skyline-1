@@ -224,6 +224,8 @@ action    = iptables[name=HTTP, port=http, protocol=tcp]
 The following steps should overall look like this:
 ![ProtectedPorts](images/ProtectedPorts.png)
 
+- Now create the filter: create the file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
+
 
 
 

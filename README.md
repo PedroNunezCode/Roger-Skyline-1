@@ -38,8 +38,74 @@ Save the file and your new user now has sudo rights.
 
 ### We don’t want you to use the DHCP service of your machine. You’ve got to configure it to have a static IP and a Netmask in \30.
 
-First Things First, Open your VirtualBoxManager, Click on your current VM. Then click settings->Network-> On Adapter 1 change default NAT to Bridged Adapter.Then Save by clicking OK.
+***1.*** First Things First, Open your VirtualBoxManager, Click on your current VM. Then click settings->Network-> On Adapter 1 change default NAT to Bridged Adapter.Then Save by clicking OK.
 
-Whilst on your sudo user: type `ip addr` to check your changes. In my case, the name of my Bridged Adapter is `enp0s3` and just a couple lines under that, You will be able to see its current ip address and its port.
+***2.*** Whilst on your sudo user: 
+```
+su - nunezcode (your user's username)
+```
+Type `ip addr` to check your changes. In my case, the name of my Bridged Adapter is `enp0s3` and just a couple lines under that, You will see its current ip address and its port.
 ![BridgeAdapter](images/BridgeAdapter.png)
+Next We will configure its ip address by going into the interfaces file:
+
+```
+sudo vim /etc/network/interfaces
+```
+
+On line: 10 you should see the following:
+![DefaultNetworkInterface](images/DefaultNetworkInterface.png)
+
+Change the following lines with this:
+
+```
+auto enp0s3
+```
+
+The end result will look like this:
+![UpdatedNetworkInterface](images/UpdatedNetworkInterface.png)
+
+By doing this, You are telling the operating system that your configurations for the network `enp0s3` will be found inside the interfaces folder called `interfaces.d/`.
+
+***4.*** Before adding the enp0s3 configurations, You will need to find the default gateway of host (Your lab computer). To get the gateway you need to run the following command on your host terminal:
+
+```
+netstat -rn
+```
+
+![DefaultGateway](images/Gateway.png)
+
+In my case my default gateway is 10.113.254.254 This will be vital to hours of debugging trying to find out why you can't establish connection to the internet and download packages for your virtual machine. So make sure you do this.
+
+
+***3.*** Next create the file for your enp0s3 configurations inside the interfaces.d folder:
+
+```
+sudo vim /etc/network/interfaces.d/enp0s3
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

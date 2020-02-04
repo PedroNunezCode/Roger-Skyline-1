@@ -123,7 +123,44 @@ I chose port 50550. You can set yours to what ever you want as long as it doesn'
 $ sudo service sshd restart
 ```
 
-***3.*** After updating your sshd configurations, You will need to [create an SSH Public Key](https://www.cyberciti.biz/faq/ubuntu-18-04-setup-ssh-public-key-authentication/);
+***3.*** After updating your sshd configurations, You will need to [create an SSH Public Key](https://www.cyberciti.biz/faq/ubuntu-18-04-setup-ssh-public-key-authentication/).
+
+On your host terminal (Lab computer) generate an ssh certificate:
+
+```
+$ ssh-keygen -t rsa
+```
+This command will generate 2 files id_rsa and id_rsa.pub. id_rsa should be kept private and never shared with anyone. The one we need to transfer to the server is id_rsa.pub to do this, We use the `ssh-copy-id` command.
+
+```
+ssh-copy-id -i id_rsa.pub nunezcode@10.113.1.142 -p 50550
+```
+
+Notice that I input my user's `username` followed by the `static ip address` that we gave our server followed by the `-p` flag (which stands for port) and then we specify the `port we selected`.
+
+This will automatically add the key you just created into  ~/.ssh/authorized_keys on the server.
+
+***3.*** After you setup your public key, Go back to the virtual machine and edit the `/etc/ssh/sshd_config` one last time.
+```
+$ sudo vim /etc/ssh/sshd_config
+```
+
+Change PasswordAuthentification to "no".
+```
+PasswordAuthentification no
+```
+
+***4.*** Last but not least, restart your SSH service:
+```
+sudo service sshd restart
+```
+
+You should now be able to login to your server via ssh by running the following command from your host machine:
+
+ssh <username>@<ip> -p <port>
+```
+ssh nunezcode@10.113.1.142 -p 50550
+```
 
 
 

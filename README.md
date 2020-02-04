@@ -172,6 +172,8 @@ $ sudo ufw status
 $ sudo ufw enable
 ```
 
+We will need to enable to following 3 services on our firewall:
+  - SSH : `sudo ufw allow 50550/tcp`
 
 
 

@@ -195,7 +195,7 @@ $ sudo apt-get install  apache2 fail2ban iptables
 $ sudo vim /etc/fail2ban/jail.conf
 ```
 
-- Protect our open ssh port (50550): Look for `[sshd]` and edit its value with the following :
+- Protect our open ssh port (50550): Look for `[sshd]` and edit its value with the following:
 
 ```
 [sshd]
@@ -207,7 +207,7 @@ maxentry  = 3
 bantime   = 1200
 ```
 
-- Protect our port 80 (HTTP protocol security): Look for `[http-get-dos]` if it doesn't exist just add it. In my case, It didn't. Put the following for its value :
+- Protect our port 80 (HTTP protocol security): Look for `[http-get-dos]` if it doesn't exist just add it. In my case, It didn't. Put the following for its value:
 
 ```
 [http-get-dos]
@@ -224,7 +224,30 @@ action    = iptables[name=HTTP, port=http, protocol=tcp]
 The following steps should overall look like this:
 ![ProtectedPorts](images/ProtectedPorts.png)
 
-- Now create the filter: create the file /etc/fail2ban/filter.d/http-get-dos.conf and copy the text below in it:
+- Now create the filter. Create the file /etc/fail2ban/filter.d/http-get-dos.conf:
+
+```
+$ sudo vim /etc/fail2ban/filter.d/http-get-dos.conf
+```
+
+- Copy the text below in it:
+```
+[Definition]
+
+failregex = ^ -.*GET
+
+ignoreregex =
+```
+
+- Reload ufw and the fail2ban service: 
+```
+$ sudo ufw reload
+$ sudo service fail2ban restart
+```
+
+- Run `sudo fail2ban-client status` to see the status of fail2ban jails:
+![Fail2BanStatus](images/Fail2BanStatus.png)
+
 
 
 

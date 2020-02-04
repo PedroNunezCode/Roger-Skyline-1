@@ -178,7 +178,7 @@ We will need to enable to following 3 services on our firewall:
   - HTTPS : `sudo ufw allow 443` (Allow HTTPS)
   - STATUS : `sudo ufw status` (Check the status of our firewall)
   
-![FirewallStatus](images/)
+![FirewallStatus](images/FireWallStatus.png)
 
 ### You have to set a DOS (Denial Of Service Attack) protection on your open ports of your VM.
 

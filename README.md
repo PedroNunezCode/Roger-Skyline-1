@@ -10,7 +10,7 @@ In my case, I created a non-root user while setting up the virtual machine. All 
 ### Use sudo, with this user, to be able to perform operation requiring special rights.
 To achive this, first install sudo. In order to install sudo, One must be in root user:
 ```
-$su || type root credentials upon vm startup
+$ su || type root credentials upon vm startup
 $ apt-get update -y && apt-get upgrade -y
 $ apt-get install sudo vim -y
 ```
@@ -20,7 +20,7 @@ I prefer to use vim but you can use nano which is installed in the vm by default
 Next the `/etc/sudoers` file needs to be updated. The username you created must be given sudo rights.
 In root user:
 ```
-nano /etc/sudoers
+$ nano /etc/sudoers
 ```
 Notice that I used nano. In this case nano will be the easiest because if I wanted to use vim I would have to change the read/write permissions of the file.
 
@@ -42,14 +42,14 @@ Save the file and your new user now has sudo rights.
 
 ***2.*** Whilst on your sudo user: 
 ```
-su - nunezcode (your user's username)
+$ su - nunezcode (your user's username)
 ```
 Type `ip addr` to check your changes. In my case, the name of my Bridged Adapter is `enp0s3` and just a couple lines under that, You will see its current ip address and its port.
 ![BridgeAdapter](images/BridgeAdapter.png)
 Next We will configure its ip address by going into the interfaces file:
 
 ```
-sudo vim /etc/network/interfaces
+$ sudo vim /etc/network/interfaces
 ```
 
 On line: 10 you should see the following:
@@ -69,7 +69,7 @@ By doing this, You are telling the operating system that your configurations for
 ***4.*** Before adding the enp0s3 configurations, You will need to find the default gateway of host (Your lab computer). To get the gateway you need to run the following command on your host terminal:
 
 ```
-netstat -rn
+$ netstat -rn
 ```
 
 ![DefaultGateway](images/Gateway.png)
@@ -80,12 +80,28 @@ In my case my default gateway is 10.113.254.254 This will be vital to hours of d
 ***3.*** Next create the file for your enp0s3 configurations inside the interfaces.d folder:
 
 ```
-sudo vim /etc/network/interfaces.d/enp0s3
+$ sudo vim /etc/network/interfaces.d/enp0s3
 ```
 
 The file should look similar to this depending on the gateway of your host machine:
 
 ![UpdatedStaticNetworkInterface](images/NetworkInterfaceStatic.png)
+
+After updating your enp0s3 you need to restart your network service in order for you changed to take effect: 
+
+```
+$ sudo service networking restart && ip addr 
+```
+
+![UpdatedRestart](images/UpdatedNetworkInterfaceRestart.png)
+
+As you can see on the image, The ip address of enp0s3 has changed to the one you put in your interface file. In my case 10.113.1.142. Also, The state of my network adapter seems to be down for some reason, If this happens to you, all you have to do is run the command: 
+
+```
+sudo ifup enp0s3
+```
+
+
 
 
 

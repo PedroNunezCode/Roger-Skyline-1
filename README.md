@@ -109,8 +109,24 @@ sudo ifup enp0s3
 $ sudo vim /etc/ssh/sshd_config
 ```
 
-On line 13 you will see that the Port variable is commented out. Uncomment line 13 and change the number to one of your choice. In my case it will be 50550. You can set yours to what ever you want as long as it doesn't confict with any other ports on your machine. 
+Change the following:
+
+Port 50550
+PermitRootLogin no
+PubkeyAuthentication yes
+
+I chose port 50550. You can set yours to what ever you want as long as it doesn't confict with any other ports on your machine. PermitRootLogin will prevent someone from logging into the root user and doing things that you don't want done. The only way to access this machine will be from Users public keys.
 >Port numbers are assigned in various ways, based on three ranges: System Ports (0-1023), User Ports (1024-49151), and the Dynamic and/or Private Ports (49152-65535);
+
+***2.*** After updating your port number, restart the sshd service:
+```
+$ sudo service sshd restart
+```
+
+***3.*** After updating your sshd configurations, You will need to [create an SSH Public Key](https://www.cyberciti.biz/faq/ubuntu-18-04-setup-ssh-public-key-authentication/);
+
+
+
 
 
 

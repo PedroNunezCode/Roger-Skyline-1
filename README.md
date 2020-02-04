@@ -162,6 +162,15 @@ ssh username@ip -p port
 ssh nunezcode@10.113.1.142 -p 50550
 ```
 
+run the command `exit` on the host's terminal to exit the server command prompt.
+
+### You have to set the rules of your firewall on your server only with the services used outside the VM.
+
+```
+$ sudo apt-get install ufw
+$ sudo ufw status
+$ sudo ufw enable
+```
 
 
 

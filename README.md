@@ -157,7 +157,7 @@ sudo service sshd restart
 
 You should now be able to login to your server via ssh by running the following command from your host machine:
 
-ssh <username>@<ip> -p <port>
+ssh username@ip -p port
 ```
 ssh nunezcode@10.113.1.142 -p 50550
 ```

@@ -315,7 +315,131 @@ $ sudo /etc/init.d/portsentry start
 
 ### Stop the services you don’t need for this project.
 
-I followed the tutorial over at [DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units) here is a brief summary:
+Install sysv-rc-conf:
+
+```
+$ sudo apt-get install sysv-rc-conf
+```
+
+Services are controlled with special shell scripts in `/etc/init.d`, Running this command will show all the services that are currently running : 
+
+```
+$ sudo service --status-all
+```
+
+To remove a service use the following command:
+
+```
+$ sudo update-rc.d SERVICE disable
+
+$ sudo update-rc.d apparmor disable
+$ sudo update-rc.d dbus disable
+$ sudo update-rc.d kmod disable
+```
+
+
+### Create a script that updates all the sources of package, then your packages and which logs the whole in a file named /var/log/update_script.log. Create a scheduled task for this script once a week at 4AM and every time the machine reboots.
+
+***1.*** I created a directory to store my maintenance scripts:
+
+```
+$ mkdir Scripts && touch Scripts/updatePackages.sh
+$ chmod a+x ~/Scripts/updatePackages.sh
+```
+
+***2.*** Add following commands inside of `Scripts/updatePackages.sh` :
+
+```
+sudo apt-get update -y >> /var/log/update_script.log
+sudo apt-get upgrade -y >> /var/log/update_script.log
+```
+
+***3.*** Add the task to crontab
+
+```
+$ sudo crontab -e
+```
+
+- In the file that was prompted add the following lines:
+
+```
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+@reboot sudo ~/Scripts/updatePackages.sh
+0 4 * * 6 sudo ~/Scripts/updatePackages.sh
+```
+
+Save the file and reboot to see the logs inside of `/var/log/update_script.log`
+
+### Make a script to monitor changes of the /etc/crontab file and sends an email to root if it has been modified. Create a scheduled script task every day at midnight.
+
+***1.*** Create a file named `monitorCron.sh` inside of the `~/Scripts` folder:
+
+```
+$ touch ~/Scripts/monitorCron.sh
+$ chmod a+x ~/Scripts/monitorCron.sh
+```
+
+- Add the following to the `monitorCron.sh` file: 
+
+```
+#!/bin/bash
+
+sudo touch /home/nunezcode/Scripts/cronMd5
+sudo chmod 777 /home/nunezcode/Scripts/cronMd5
+m1="$(md5sum '/etc/crontab' | awk '{print $1}')"
+m2="$(cat '/home/nunezcode/Scripts/cronMd5')"
+echo ${m1}
+echo ${m2}
+
+if [ "$m1" != "$m2"] ; then
+	md5sum /etc/crontabs | awk '{print $1}' > /home/nunezcode/Scripts/cronMd5
+	echo "Crontab was edited!" | mail -s "Cronfile was changed" root@debian.lan
+fi
+
+```
+
+- Make sure cron service is enabled: 
+
+```
+$ sudo systemctl enable cron
+```
+
+- Follow the following tutorial to recieve mail [tutorial](https://www.cmsimike.com/blog/2011/10/30/setting-up-local-mail-delivery-on-ubuntu-with-postfix-and-mutt/"
+
+### Web Part
+
+***1.*** Generate SSL self-signed key and certificate:
+
+```
+$sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+
+Country name: UA
+State or Province Name: ENTER
+Locality Name: ENTER
+Organization Name: ENTER
+Organizational Unit Name: ENTER
+Common Name: 10.113.1.142 (VM IP address)
+Email Address: root@debian.lan
+```
+
+***2.*** Create the file `/etc/apache2/conf-available/ssl-params.conf` and add the following in it:
+
+```
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLProtocol All -SSLv2 -SSLv3
+SSLHonorCipherOrder On
+
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+
+SSLCompression off
+SSLSessionTickets Off
+SSLUseStapling on
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+```
+
 
 
 

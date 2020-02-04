@@ -87,7 +87,7 @@ The file should look similar to this depending on the gateway of your host machi
 
 ![UpdatedStaticNetworkInterface](images/NetworkInterfaceStatic.png)
 
-After updating your enp0s3 you need to restart your network service in order for you changed to take effect: 
+***4.*** After updating your enp0s3 you need to restart your network service in order for you changed to take effect: 
 
 ```
 $ sudo service networking restart && ip addr 
@@ -101,9 +101,16 @@ As you can see on the image, The ip address of enp0s3 has changed to the one you
 sudo ifup enp0s3
 ```
 
+### You have to change the default port of the SSH service by the one of your choice. SSH access HAS TO be done with publickeys. SSH root access SHOULD NOT be allowed directly, but with a user who can be root.
 
+***1.*** You will need to change the port of the ssh service. To change the default port you will have to update the `sshd_config` file:
 
+```
+$ sudo vim /etc/ssh/sshd_config
+```
 
+On line 13 you will see that the Port variable is commented out. Uncomment line 13 and change the number to one of your choice. In my case it will be 50550. You can set yours to what ever you want as long as it doesn't confict with any other ports on your machine. 
+>Port numbers are assigned in various ways, based on three ranges: System Ports (0-1023), User Ports (1024-49151), and the Dynamic and/or Private Ports (49152-65535);
 
 
 
